@@ -8,11 +8,18 @@ const session = require('express-session');
 const MongoStore = require('connect-mongo')(session);
 const path = require('path');
 const flash = require('express-flash');
+const nunjucks = require('nunjucks');
+const bluebird = require('bluebird');
+const fs = require('fs');
 
-const homeController = require('./controller/home');
-const userController = require('./controller/user');
-
-mongoose.Promise = global.Promise;
+var modelDir = path.join(__dirname, 'model');
+fs.readdirSync(modelDir).filter(function (file) {
+        return ~file.search(/^[^\.].*\.js$/);
+    }).forEach(function (file) {
+        console.log(path.join(modelDir, file));
+        require(path.join(modelDir, file));
+    });
+mongoose.Promise = bluebird;
 mongoose.connect(config.db.uri);
 mongoose.connection.on('error', function(err) {
     console.error(err);
@@ -21,8 +28,14 @@ mongoose.connection.on('error', function(err) {
 });
 
 const app = express();
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'pug');
+nunjucks.configure('views', {
+    autoescape: true,
+    express: app,
+    noCache: true
+});
+if (process.env.NODE_ENV === 'development') {
+    app.set('view cache', false);
+}
 app.use(compression());
 app.use(flash());
 app.use(bodyParser.json());
@@ -39,9 +52,12 @@ app.use(session({
 }));
 app.use(express.static(path.join(__dirname, 'public'), { maxAge: 31557600000 }));
 
+const homeController = require('./controller/home');
+const userController = require('./controller/user');
 app.get('/', homeController.index);
 app.get('/signup', userController.getSignup);
 app.post('/signup', userController.postSignup);
+app.get('/login', userController.getLogin);
 
 app.use(function(err, req, res, next) {
     console.error(err.stack);
@@ -53,5 +69,8 @@ app.listen(config.port, function() {
     console.log('%s App is running at http://localhost:%d in %s mode', chalk.green('✓'), config.port, app.get('env'));
     console.log(chalk.green('Environment:     ' + process.env.NODE_ENV));
     console.log(chalk.green('Database:        ' + config.db.uri));
+    console.log(chalk.green('View cache:        ' + app.get('view cache')));
     console.log('--');
+
+    // require('./common/init').initDB();
 });

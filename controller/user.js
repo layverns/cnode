@@ -1,5 +1,5 @@
-const User = require('../model/User');
-
+const mongoose = require('mongoose');
+const User = mongoose.model('User');
 exports.getLogin = function (req, res) {
     if (req.user) {
         return res.redirect('/');

@@ -1,0 +1,69 @@
+{% extends "./layout.html" %}
+
+{% block main %}
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <ul class="nav nav-pills">
+            <li role="presentation" class="active"><a href="/">全部</a></li>
+            <li role="presentation"><a href="/?category=jinghua">精华</a></li>
+            <li role="presentation"><a href="/?category=fenxiang">分享</a></li>
+            <li role="presentation"><a href="/?category=wenda">问答</a></li>
+            <li role="presentation"><a href="/?category=zhaoping">招聘</a></li>
+        </ul>
+    </div>
+        <!-- Table -->
+        <ul class="list-group">
+            {% for article in articles%}
+            <li class="list-group-item">
+                <div class="row">
+                    <img src="" alt="avatar" class="img-rounded col-sm-1 item">
+                    <span class="col-sm-1 item">2/3</span>
+                    <span class="label label-default col-sm-1 item">Default</span>
+                    <a class="col-sm-8 item">{{article.title}}</a>
+                    <span class="col-sm-1 item">12/23</span>
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+        <ul class="pagination">
+            <li>
+                <a href="/?category={{category}}&page={% if page - 5 >= 0%}{{page - 5}}{% else %}0{% endif %}" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+            {% for i in pagination %}
+            <li {%if i === page %}class="active"{% endif %}><a href="/?category={{category}}&page={{i}}">{{i + 1}}</a></li>
+            {% endfor %}
+            <li>
+                <a href="/?category={{category}}&page={% if page + 5 < pages %}{{page + 5}}{% else %}{{pages - 1}}{% endif %}" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+        </ul>
+</div>
+{% endblock %}
+
+{% block sidebar %}
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">Panel title</h3>
+    </div>
+    <div class="panel-body">
+        sidebar
+    </div>
+</div>
+{% endblock %}
+
+{% block css %}
+<style>
+    .item {
+        vertical-align: middle;
+    }
+</style>
+{% endblock %}
+
+{% block script %}
+<script>
+
+</script>
+{% endblock %}
