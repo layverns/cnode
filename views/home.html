@@ -1,6 +1,22 @@
 {% extends "./layout.html" %}
 
+{% block title %}文章{% endblock %}
+
 {% block main %}
+{% if messages.success %}
+<div class="alert alert-success">
+    <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+    {{ messages.success }}
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+</div>
+{% endif %}
+{% if messages.error %}
+<div class="alert alert-error">
+    <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+    {{ messages.error }}
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+</div>
+{% endif %}
 <div class="panel panel-default">
     <div class="panel-heading">
         <ul class="nav nav-pills">
@@ -15,13 +31,13 @@
         <ul class="list-group">
             {% for article in articles%}
             <li class="list-group-item">
-                <div class="row">
-                    <img src="" alt="avatar" class="img-rounded col-sm-1 item">
-                    <span class="col-sm-1 item">2/3</span>
-                    <span class="label label-default col-sm-1 item">Default</span>
-                    <a class="col-sm-8 item">{{article.title}}</a>
-                    <span class="col-sm-1 item">12/23</span>
-                </div>
+                <img src="{{article.user.avatar}}" alt="avatar" class="img-rounded article-avatar">
+                <span class="article-count"><span class="text-primary">{{article.countComment}}</span >/<span class="text-muted">{{article.countView}}</span></span>
+                {% if article.order === 100 %}<span class="label label-success article-tag">顶置</span>
+                {% elif article.isGreat %}<span class="label label-success article-tag">精华</span>
+                {% else %}<span class="label label-default article-tag">{{ article.category.title }}</span>{% endif %}
+                <a class="article-title" href="/article?id={{article.id}}">{{article.title}}</a>
+                <span class="article-time">{{article.updatedAt|formatDate}}</span>
             </li>
             {% endfor %}
         </ul>
@@ -57,6 +73,30 @@
 {% block css %}
 <style>
     .item {
+        vertical-align: middle;
+    }
+    .article-time {
+        font-size: 10px;
+        vertical-align: middle;
+    }
+    .article-avatar {
+        width: 32px;
+        vertical-align: middle;
+    }
+    .article-count {
+        margin-left: 10px;
+        vertical-align: middle;
+    }
+    .article-tag {
+        margin-left: 10px;
+        vertical-align: middle;
+    }
+    .article-title {
+        margin-left: 10px;
+        vertical-align: middle;
+    }
+    .article-time {
+        float: right;
         vertical-align: middle;
     }
 </style>

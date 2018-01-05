@@ -1,0 +1,90 @@
+{% extends "./layout.html" %}
+
+{% block title %}文章{% endblock %}
+
+{% block main %}
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h1>{{article.title}}</h1>
+        <span class="text-mute">发布于{{article.createdAt|formatDate}} 作者{{article.user.nickname}} {{article.countView}}次浏览 来自{{article.category.title}}</span>
+    </div>
+    <div class="panel-body">
+        {{article.content}}
+    </div>
+</div>
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <p>{{article.countComment}}回复</p>
+    </div>
+    <ul class="list-group">
+        {% for comment in comments %}
+        <li class="list-group-item">
+            <img src="{{comment.user.avatar}}" alt="avatar" class="img-rounded avatar">
+            <span>{{comment.user.nickname}}</span>
+            <span class="text-primary">{{loop.index}}楼</span>
+            <span class="text-primary">{{comment.createdAt|formatDate}}</span>
+            {% if comment.user.id === article.user.id %}
+            <span class="label label-success">作者</span>
+            {% endif %}
+            <span class="pull-right">
+                <span >{{comment.countLike}}<span class="glyphicon glyphicon-thumbs-up"></span></span>
+                <span class="glyphicon glyphicon-comment"></span>
+            </span>
+            <div class="clearfix"></div>
+            <div class="comment">{{comment.content}}</div>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}
+
+{% block sidebar %}
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">作者</h3>
+    </div>
+    <div class="panel-body">
+
+    </div>
+</div>
+<div class="panel panel-default">
+    <div class="panel-body">
+        <a><img src="/img/banner1.jpg" width="100%"></a>
+        <div class="sep10"></div>
+        <a><img src="/img/banner2.jpg" width="100%"></a>
+        <div class="sep10"></div>
+        <a><img src="/img/banner3.jpg" width="100%"></a>
+    </div>
+</div>
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">作者其他话题</h3>
+    </div>
+    <ul class="list-group">
+        {% for article in otherArticles %}
+        <li class="list-group-item"><a href="/article?id={{article.id}}">{{ article.title }}</a></li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}
+
+{% block css %}
+<style>
+    .sep10 {
+        height: 10px;
+    }
+    .avatar {
+        width: 32px;
+    }
+    .comment {
+        margin-left: 40px;
+    }
+</style>
+{% endblock %}
+
+{% block script %}
+<script src="/lib/moment/moment-with-locales.js"></script>
+<script>
+
+</script>
+{% endblock %}

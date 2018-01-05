@@ -23,8 +23,13 @@
                 <li><a href="/newbie">新手入门</a></li>
                 <li><a href="/api">API</a></li>
                 <li><a href="/about">关于</a></li>
+                {% if user %}
+                <li><a href="/profile">设置</a></li>
+                <li><a href="/logout">登出</a></li>
+                {% else %}
                 <li><a href="/signup">注册</a></li>
                 <li><a href="/login">登录</a></li>
+                {% endif %}
             </ul>
         </div><!--/.nav-collapse -->
     </div>

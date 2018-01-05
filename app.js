@@ -11,6 +11,9 @@ const flash = require('express-flash');
 const nunjucks = require('nunjucks');
 const bluebird = require('bluebird');
 const fs = require('fs');
+const moment = require('moment');
+const passport = require('passport');
+
 
 var modelDir = path.join(__dirname, 'model');
 fs.readdirSync(modelDir).filter(function (file) {
@@ -28,10 +31,14 @@ mongoose.connection.on('error', function(err) {
 });
 
 const app = express();
-nunjucks.configure('views', {
+var env = nunjucks.configure('views', {
     autoescape: true,
     express: app,
     noCache: true
+});
+env.addFilter('formatDate', function(str) {
+
+    return moment(str).format('YYYY-MM-DD HH:mm');
 });
 if (process.env.NODE_ENV === 'development') {
     app.set('view cache', false);
@@ -41,23 +48,44 @@ app.use(flash());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(session({
+    cookie: {
+        maxAge: 24 * 60 * 60 * 1000
+    },
     resave: true,
     saveUninitialized: true,
     secret: config.sessionSecret,
     store: new MongoStore({
         url: config.db.uri,
-        autoReconnect: true,
-        clear_interval: 3600
+        autoReconnect: true
     })
 }));
 app.use(express.static(path.join(__dirname, 'public'), { maxAge: 31557600000 }));
+app.use(passport.initialize());
+app.use(passport.session());
+
+require('./config/passport');
 
 const homeController = require('./controller/home');
+const articleController = require('./controller/article');
 const userController = require('./controller/user');
+app.use(function (req, res, next) {
+    res.locals.user = req.user;
+    next();
+});
 app.get('/', homeController.index);
+app.get('/article', articleController.index);
 app.get('/signup', userController.getSignup);
 app.post('/signup', userController.postSignup);
 app.get('/login', userController.getLogin);
+app.get('/logout', userController.getLogout);
+app.post('/login', passport.authenticate('local',
+    { failureRedirect: '/login',
+    failureFlash: true }),
+    userController.postLogin);
+app.get('/auth/github', passport.authenticate('github'));
+app.get('/auth/github/callback', passport.authenticate('github', { failureRedirect: '/login' }), function (req, res) {
+    res.redirect(req.session.returnTo || '/');
+});
 
 app.use(function(err, req, res, next) {
     console.error(err.stack);
