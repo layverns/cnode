@@ -1,0 +1,13 @@
+<div class="panel panel-default">
+    <div class="panel-heading">
+        个人信息
+    </div>
+    <div class="panel-body">
+        <div>
+            <img class="img-rounded" src="{{ user.avatar }}" style="width: 40px">
+            <span>{{ user.nickname }}</span>
+        </div>
+        <div style="line-height: 2;">积分：{{ user.score }}</div>
+        <div>{{ user.about }}</div>
+    </div>
+</div>

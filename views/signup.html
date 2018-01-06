@@ -10,13 +10,6 @@
         <span>注册</span>
     </div>
     <div class="panel-body">
-        {% if messages.error %}
-        <div class="alert alert-danger">
-            <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-            {{ messages.error }}
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        </div>
-        {% endif %}
         <form class="form-horizontal" method='POST' action="/signup">
             <input type='hidden' name='_csrf' value=_csrf>
             <div class="form-group">

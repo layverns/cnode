@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const Article = mongoose.model('Article');
 const Category =  mongoose.model('Category');
 const Comment =  mongoose.model('Comment');
-const Promise = require('bluebird');
+const Promise = mongoose.Promise;
 const constant = require('../common/constant');
 
 exports.index = function (req, res, next) {

@@ -3,21 +3,9 @@
 {% block title %}文章{% endblock %}
 
 {% block main %}
-{% if messages.success %}
-<div class="alert alert-success">
-    <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-    {{ messages.success }}
-    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-</div>
-{% endif %}
-{% if messages.error %}
-<div class="alert alert-error">
-    <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-    {{ messages.error }}
-    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-</div>
-{% endif %}
+
 <div class="panel panel-default">
+
     <div class="panel-heading">
         <ul class="nav nav-pills">
             <li role="presentation" class="active"><a href="/">全部</a></li>
@@ -27,6 +15,7 @@
             <li role="presentation"><a href="/?category=zhaoping">招聘</a></li>
         </ul>
     </div>
+
         <!-- Table -->
         <ul class="list-group">
             {% for article in articles%}
@@ -60,21 +49,20 @@
 {% endblock %}
 
 {% block sidebar %}
+{% include "./partial/sidebar-profile.html" %}
 <div class="panel panel-default">
-    <div class="panel-heading">
-        <h3 class="panel-title">Panel title</h3>
-    </div>
     <div class="panel-body">
-        sidebar
+        <a class="btn btn-success">发布话题</a>
     </div>
 </div>
+{% include "./partial/sidebar-ads.html" %}
+{% include "./partial/sidebar-link.html" %}
+{% include "./partial/sidebar-rank.html" %}
+{% include "./partial/sidebar-article-no-comment.html" %}
 {% endblock %}
 
 {% block css %}
 <style>
-    .item {
-        vertical-align: middle;
-    }
     .article-time {
         font-size: 10px;
         vertical-align: middle;

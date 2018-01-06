@@ -1,0 +1,10 @@
+<div class="panel panel-default">
+    <div class="panel-heading">
+        无人回复的话题
+    </div>
+    <div class="panel-body">
+        {% for article in articleNoComments %}
+        <div><a style="line-height: 2" href="/article/{{article.id}}">{{ article.title }}</a></div>
+        {% endfor %}
+    </div>
+</div>

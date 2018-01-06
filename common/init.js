@@ -3,7 +3,7 @@ const Article = mongoose.model('Article');
 const Category =  mongoose.model('Category');
 const Comment =  mongoose.model('Comment');
 const User =  mongoose.model('User');
-const Promise = require("bluebird");
+const Promise = mongoose.Promise;
 
 exports.initDB = function () {
 

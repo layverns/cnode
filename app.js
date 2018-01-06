@@ -1,9 +1,10 @@
+const config = require('./config');
+
 const express = require('express');
 const compression = require('compression');
 const mongoose = require('mongoose');
-const config = require('./config');
-const chalk = require('chalk');
 const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const MongoStore = require('connect-mongo')(session);
 const path = require('path');
@@ -14,21 +15,18 @@ const fs = require('fs');
 const moment = require('moment');
 const passport = require('passport');
 
+require('./config/log');
+const log = require('log4js').getLogger();
 
+mongoose.Promise = bluebird;
 var modelDir = path.join(__dirname, 'model');
 fs.readdirSync(modelDir).filter(function (file) {
         return ~file.search(/^[^\.].*\.js$/);
     }).forEach(function (file) {
-        console.log(path.join(modelDir, file));
+        log.debug('init mongodb model');
+        log.debug(path.join(modelDir, file));
         require(path.join(modelDir, file));
     });
-mongoose.Promise = bluebird;
-mongoose.connect(config.db.uri);
-mongoose.connection.on('error', function(err) {
-    console.error(err);
-    console.log('%s MongoDB connection error. Please make sure MongoDB is running.', chalk.red('✗'));
-    process.exit();
-});
 
 const app = express();
 var env = nunjucks.configure('views', {
@@ -37,16 +35,14 @@ var env = nunjucks.configure('views', {
     noCache: true
 });
 env.addFilter('formatDate', function(str) {
-
     return moment(str).format('YYYY-MM-DD HH:mm');
 });
-if (process.env.NODE_ENV === 'development') {
-    app.set('view cache', false);
-}
+
 app.use(compression());
 app.use(flash());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cookieParser());
 app.use(session({
     cookie: {
         maxAge: 24 * 60 * 60 * 1000
@@ -86,19 +82,36 @@ app.get('/auth/github', passport.authenticate('github'));
 app.get('/auth/github/callback', passport.authenticate('github', { failureRedirect: '/login' }), function (req, res) {
     res.redirect(req.session.returnTo || '/');
 });
+app.get('/profile', userController.getProfile);
+app.post('/profile', userController.postProfile);
+app.post('/password', userController.postPassword);
+
+// catch 404 and forward to error handler
+app.use(function(req, res, next) {
+    var err = new Error('Not Found');
+    err.status = 404;
+    next(err);
+});
 
 app.use(function(err, req, res, next) {
-    console.error(err.stack);
-    res.end('server error');
+    res.locals.message = err.message;
+    res.status(err.status || 500);
+    res.render('error.html');
 });
 
-app.listen(config.port, function() {
-    console.log('--');
-    console.log('%s App is running at http://localhost:%d in %s mode', chalk.green('✓'), config.port, app.get('env'));
-    console.log(chalk.green('Environment:     ' + process.env.NODE_ENV));
-    console.log(chalk.green('Database:        ' + config.db.uri));
-    console.log(chalk.green('View cache:        ' + app.get('view cache')));
-    console.log('--');
-
-    // require('./common/init').initDB();
+mongoose.connect(config.db.uri);
+mongoose.connection.on('error', function(err) {
+    console.error(err);
+    console.error('MongoDB connection error. Please make sure MongoDB is running.');
+}).once('open', function () {
+    app.listen(config.port, function() {
+        log.info('--');
+        log.info('App is running at %s:%d', config.host, config.port);
+        log.info('Environment:     ' + process.env.NODE_ENV);
+        log.info('Database:        ' + config.db.uri);
+        log.info('--');
+        // require('./common/init').initDB();
+    });
 });
+
+

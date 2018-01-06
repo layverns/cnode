@@ -37,20 +37,26 @@ passport.use(new GithubStrategy({
         callbackURL: config.github.callbackURL
     },
     function (accessToken, refreshToken, profile, done) {
-        console.log('profile', profile);
-
-        User.findOne().where('github.id').equals(profile.id).exec().then(function (value) {
+        User.findOne().where('github.id').equals(profile._json.id).exec().then(function (value) {
             if (value) {
                 return done(null, value);
             } else {
-                var user = new User({
-                    email: profile._json.email,
-                    nickname: profile._json.name,
-                    avatar: profile._json.avatar_url,
-                    github: profile._json,
-                    password: constant.DEFAULT_PASSWORD
+                User.findOne().where('email').equals(profile._json.email).exec().then(function (value2) {
+                    if (value2) {
+                        value2.github = profile._json;
+                        value2.save(done);
+                    } else {
+                        var user = new User({
+                            email: profile._json.email,
+                            nickname: profile._json.name,
+                            avatar: profile._json.avatar_url,
+                            github: profile._json,
+                            password: constant.DEFAULT_PASSWORD
+                        });
+                        user.save(done);
+                    }
                 });
-                user.save(done);
+
             }
         }).catch(function (reason) {
             console.log(reason);

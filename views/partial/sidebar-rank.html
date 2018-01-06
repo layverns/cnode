@@ -1,0 +1,10 @@
+<div class="panel panel-default">
+    <div class="panel-heading">
+        积分榜
+    </div>
+    <div class="panel-body">
+        {% for user in rankUsers %}
+        <div><span style="display:inline-block; width: 40px;text-align: left;">{{user.score}}</span> <a style="line-height: 2;" href="/user/{{user.id}}">{{ user.nickname }}</a></div>
+        {% endfor %}
+    </div>
+</div>

@@ -1,7 +1,8 @@
 const mongoose = require('mongoose');
 const Article = mongoose.model('Article');
+const User = mongoose.model('User');
 const Category =  mongoose.model('Category');
-const Promise = require('bluebird');
+const Promise = mongoose.Promise;
 const constant = require('../common/constant');
 
 exports.index = function (req, res, next) {
@@ -14,6 +15,9 @@ exports.index = function (req, res, next) {
     var catFenXiangId;
     var catWenDaId;
     var catId;
+    var articles;
+    var articleNoComments;
+    var rankUsers;
     Promise.resolve().then(function () {
         return Category.findOne().where('value').equals('fenxiang').exec();
     }).then(function (value) {
@@ -43,8 +47,15 @@ exports.index = function (req, res, next) {
             return Article.find().where('category').equals(catId).skip(page * limit).limit(limit).sort({order: -1, createdAt: -1}).populate({path: 'category', select: 'title'}).populate({path: 'user', select: 'nickname avatar'}).exec();
         }
     }).then(function (value) {
-        console.log("pages: %d", pages);
-        console.log(value[0]);
+        articles = value ? value : [];
+
+        return Article.find().where('countComment').equals(0).limit(5).sort({createdAt: -1}).select('title').exec();
+    }).then(function (value) {
+        articleNoComments = value ? value : [];
+
+        return User.find().limit(10).sort({score: -1}).select('nickname score').exec();
+    }).then(function (value) {
+        rankUsers = value ? value : [];
 
         var pagination = [];
         var startPage = page - 2;
@@ -54,7 +65,7 @@ exports.index = function (req, res, next) {
             }
             startPage++;
         }
-        res.render('home.html', { title: 'Home', articles: value, pages: pages, page: page, pagination: pagination, category:category });
+        res.render('home.html', { title: 'Home', articles: articles, pages: pages, page: page, pagination: pagination, category:category, articleNoComments: articleNoComments, rankUsers: rankUsers });
     }).catch(function (err) {
         next(err);
     });
