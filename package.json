@@ -2,10 +2,11 @@
   "name": "cnode",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
-    "start": "nodemon app.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "gulp",
+    "start:prod": "gulp prod",
+    "test": "mocha test"
   },
   "repository": {
     "type": "git",
@@ -27,6 +28,8 @@
     "express-flash": "0.0.2",
     "express-session": "^1.15.6",
     "express-validator": "^4.3.0",
+    "gulp": "^3.9.1",
+    "gulp-nodemon": "^2.2.1",
     "lodash": "^4.17.4",
     "log4js": "^2.4.1",
     "moment": "^2.20.1",
@@ -36,9 +39,11 @@
     "passport": "^0.4.0",
     "passport-github": "^1.1.0",
     "passport-local": "^1.0.0",
+    "run-sequence": "^2.2.1",
     "validator": "^9.2.0"
   },
   "devDependencies": {
+    "mocha": "^4.1.0",
     "nodemon": "^1.14.7"
   }
 }

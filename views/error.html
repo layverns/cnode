@@ -1,0 +1,68 @@
+{% extends "./layout.html" %}
+
+{% block title %}文章{% endblock %}
+
+{% block main %}
+
+<div class="panel panel-default">
+
+    <div class="panel-heading">
+        <ul class="nav nav-pills">
+            <li role="presentation" class="active"><a href="/">全部</a></li>
+            <li role="presentation"><a href="/?category=jinghua">精华</a></li>
+            <li role="presentation"><a href="/?category=fenxiang">分享</a></li>
+            <li role="presentation"><a href="/?category=wenda">问答</a></li>
+            <li role="presentation"><a href="/?category=zhaoping">招聘</a></li>
+        </ul>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block sidebar %}
+{% include "./partial/sidebar-profile.html" %}
+<div class="panel panel-default">
+    <div class="panel-body">
+        <a class="btn btn-success">发布话题</a>
+    </div>
+</div>
+{% include "./partial/sidebar-ads.html" %}
+{% include "./partial/sidebar-link.html" %}
+{% include "./partial/sidebar-rank.html" %}
+{% include "./partial/sidebar-article-no-comment.html" %}
+{% endblock %}
+
+{% block css %}
+<style>
+    .article-time {
+        font-size: 10px;
+        vertical-align: middle;
+    }
+    .article-avatar {
+        width: 32px;
+        vertical-align: middle;
+    }
+    .article-count {
+        margin-left: 10px;
+        vertical-align: middle;
+    }
+    .article-tag {
+        margin-left: 10px;
+        vertical-align: middle;
+    }
+    .article-title {
+        margin-left: 10px;
+        vertical-align: middle;
+    }
+    .article-time {
+        float: right;
+        vertical-align: middle;
+    }
+</style>
+{% endblock %}
+
+{% block script %}
+<script>
+
+</script>
+{% endblock %}
